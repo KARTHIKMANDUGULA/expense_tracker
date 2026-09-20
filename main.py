@@ -35,23 +35,56 @@ class bank:
         with open ("save_to_file.csv","a") as f:
             f.writelines(self.history)
 while True:
+    u=input("are you new customer or old customer:").strip().lower()
+    if u in ["old","new"]:
+        break
+    print("enter 'old' or 'new'")
 
+if u=="old":
     try:
 
-        acc_no=int(input("enter acc_no:"))
-        bal=float(input("pls deposit money:"))
-        if bal<0:
-            print("amount should not be negative,kindly enter correct amount")
-        else :
-            print("money deposited in bank sucessfully")
-            acc1=bank(acc_no,bal)
-            break
+        with open("save_to_file.csv","r") as f:
+            hist=f.readlines()
         
-    except ValueError:
-        print("enter valid inputs")
+    except FileNotFoundError:
+        hist=[]
+    if not hist:
+        print("no records found pls login via new account")
+        u="new"
+    else:        
+        recent_history=hist[-1].strip().split(",")
 
+        while True:
+            try:
+
+                acc_no=int(input("enter acc_no:"))
+                bal=float(recent_history[3])
+                acc1=bank(acc_no,bal)
+                break
+         
+            except ValueError:
+                print("enter valid inputs")
+
+
+if u=="new":
+    while True:
+        try:
+
+            acc_no=int(input("enter acc_no:"))
+            bal=float(input("pls deposit money:"))
+            if bal<0:
+                print("amount should not be negative,kindly enter correct amount")
+            else :
+                print("money deposited in bank sucessfully")
+                acc1=bank(acc_no,bal)
+                acc1.history.append(f"credit,+{bal},balance,{bal}\n")
+                break
+        
+        except ValueError:
+            print("enter valid inputs")
 
 while True:
+
     n=input("choose[add,debit,check balance,exit]:").strip().lower()     
     if n=="add":
         try:
@@ -73,6 +106,5 @@ while True:
     else :
         print("enter valid type and try again")
         print("=======================================================")
-
 
 acc1.save()
